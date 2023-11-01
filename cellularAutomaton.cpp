@@ -8,11 +8,13 @@ using namespace std;
 const int ROW_SIZE = 60;
 const int GENERATIONS = 45;
 
+void menu();
 void generate(int *cells, int ruleset[]);
 int rules(int left, int me, int right, int ruleset[]);
 
 int main()
 {
+    menu();
     int ruleset[] = {0, 0, 1, 1, 1, 1, 1, 0};
     int *cells = (int *)malloc(sizeof(int) * ROW_SIZE);
 
@@ -74,6 +76,29 @@ void generate(int *cells, int ruleset[])
     for (int i = 0; i < ROW_SIZE; i++)
     {
         cells[i] = nextgen[i];
+    }
+}
+
+void menu(){
+    int choice;
+    cout << "1. Run cellular automaton" << endl;
+    cout << "2. Game of life" << endl;
+    cout << "3. Exit" << endl;
+    cin >> choice;
+    switch (choice)
+    {
+    case 1:
+        void generate(int *cells, int ruleset[]);
+        break;
+    case 2:
+        //testing
+        break;
+    case 3: 
+        exit(1);
+    default:
+        cout << "Please enter again";
+        menu();
+        break;
     }
 }
 
