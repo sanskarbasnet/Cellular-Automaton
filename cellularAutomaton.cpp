@@ -14,7 +14,7 @@ int rules(int left, int me, int right, int ruleset[]);
 
 int main()
 {
-    menu();
+    //menu();
     int ruleset[] = {0, 0, 1, 1, 1, 1, 1, 0};
     int *cells = (int *)malloc(sizeof(int) * ROW_SIZE);
 
