@@ -3,6 +3,8 @@
 #include <locale>
 #include <io.h>
 #include <fcntl.h>
+#include <bitset>
+#include <limits>
 using namespace std;
 
 const int ROW_SIZE = 60;
@@ -11,6 +13,7 @@ const int GENERATIONS = 45;
 void menu();
 void generate(int *cells, int ruleset[]);
 int rules(int left, int me, int right, int ruleset[]);
+
 
 int main()
 {
@@ -79,24 +82,57 @@ void generate(int *cells, int ruleset[])
     }
 }
 
+void decimalToBinary(){
+    unsigned int decimalNumber;
+    do {
+        cout << "Enter a decimal number (0 to 255): ";
+        cin >> decimalNumber;
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            decimalNumber = 256; 
+        }
+        if(decimalNumber > 255){
+            cout << "The number must be between 0 and 255. Please try again." << endl;
+        }
+    } while(decimalNumber > 255);
+
+    cout << "The binary representation of " << decimalNumber << " is: ";
+    std::bitset<8> binaryNumber(decimalNumber); 
+    cout << binaryNumber << endl;
+    std::string binaryString = binaryNumber.to_string();
+    size_t firstOne = binaryString.find('1');
+    if(firstOne != std::string::npos) {
+        cout << binaryString.substr(firstOne) << endl;
+    } else {
+        cout << "0" << endl; 
+    }
+}
+
+
+
 void menu(){
     int choice;
     cout << "1. Run cellular automaton" << endl;
     cout << "2. Game of life" << endl;
-    cout << "3. Exit" << endl;
+    cout << "3. Decimal to Binary" << endl; 
+    cout << "4. Exit" << endl;
     cin >> choice;
     switch (choice)
     {
     case 1:
-        void generate(int *cells, int ruleset[]);
+        //cellular automaton
         break;
     case 2:
-        //testing
+        //game of life
         break;
-    case 3: 
+    case 3:
+        decimalToBinary(); // Call the new function
+        break;
+    case 4: 
         exit(1);
     default:
-        cout << "Please enter again";
+        cout << "Please enter a valid option." << endl;
         menu();
         break;
     }
