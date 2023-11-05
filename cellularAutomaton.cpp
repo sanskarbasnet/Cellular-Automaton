@@ -88,10 +88,9 @@ void decimalToBinary(){
         cout << "Enter a decimal number (0 to 255): ";
         cin >> decimalNumber;
         if (cin.fail()) {
-            // If user input is not an integer, clear the error and ignore the rest of the input
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            decimalNumber = 256; // Set to an invalid value to continue the loop
+            decimalNumber = 256; 
         }
         if(decimalNumber > 255){
             cout << "The number must be between 0 and 255. Please try again." << endl;
@@ -99,7 +98,7 @@ void decimalToBinary(){
     } while(decimalNumber > 255);
 
     cout << "The binary representation of " << decimalNumber << " is: ";
-    std::bitset<8> binaryNumber(decimalNumber); // Changed to 8 bits since we only deal with 0-255
+    std::bitset<8> binaryNumber(decimalNumber); 
     cout << binaryNumber << endl;
     std::string binaryString = binaryNumber.to_string();
     size_t firstOne = binaryString.find('1');
