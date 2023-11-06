@@ -1,11 +1,13 @@
-#include "Helper.h"
+#include "helper.h"
 
+// Function to display the main menu
 void menu()
 {
     int choice;
-    cout << "1. Run cellular automaton" << endl;
-    cout << "2. Game of life" << endl;
-    cout << "3. Exit" << endl;
+    cout << "[1]. Run cellular automaton" << endl;
+    cout << "[2]. Game of life" << endl;
+    cout << "[3]. Exit" << endl;
+    cout << "Enter a choice(1-3): ";
     cin >> choice;
     switch (choice)
     {
@@ -24,6 +26,7 @@ void menu()
     }
 }
 
+// Function to handle the cellular automaton menu
 void cellularAutomatonMenu()
 {
     int opt;
@@ -79,6 +82,7 @@ void cellularAutomatonMenu()
         decimalToBinary(rule, ruleset);
         cout << endl;
         runCustomisedCellularAutomaton(ruleset, gens, size, parseAndStoreNumbers(index, size, size), rule);
+        break;
     }
     default:
         cout << "Please enter a valid option" << endl;
@@ -87,6 +91,7 @@ void cellularAutomatonMenu()
     }
 }
 
+// Function to handle the Game of Life menu
 void gameOfLifeMenu()
 {
     int opt;
@@ -153,6 +158,8 @@ void gameOfLifeMenu()
         break;
     }
 }
+
+// Function to parse and store numbers from input
 vector<int> parseAndStoreNumbers(const string &input, int max_size, int max_size2)
 {
     std::vector<int> indexVector;
@@ -168,7 +175,14 @@ vector<int> parseAndStoreNumbers(const string &input, int max_size, int max_size
         {
             cout << "Invalid input" << endl;
             cout << "Make sure you enter indices between 0 and permitted size" << endl;
-            cellularAutomatonMenu();
+            if (max_size == max_size2)
+            {
+                cellularAutomatonMenu();
+            }
+            else
+            {
+                gameOfLifeMenu();
+            }
         }
     }
     return indexVector;
