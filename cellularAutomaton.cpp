@@ -1,68 +1,79 @@
-#include <iostream>
-#include <cstdlib>
-#include <locale>
-#include <io.h>
-#include <fcntl.h>
-#include <bitset>
-#include <limits>
-using namespace std;
-
-const int ROW_SIZE = 60;
-const int GENERATIONS = 45;
-
-void menu();
-void generate(int *cells, int ruleset[]);
-int rules(int left, int me, int right, int ruleset[]);
-
+#include "Helper.h"
 
 int main()
 {
-    //menu();
-    int ruleset[] = {0, 0, 1, 1, 1, 1, 1, 0};
-    int *cells = (int *)malloc(sizeof(int) * ROW_SIZE);
+    menu();
+    return 0;
+}
+
+void runCellularAutomata(int ruleset[], int ruleNumber)
+{
+    vector<int> index = {ROW_SIZE / 2};
+    int *cells = initialise(ROW_SIZE);
+    populateFirstGeneration(index, cells);
+    printGeneration(cells, ruleset, GENERATIONS, ruleNumber);
+    free(cells);
+}
+
+void runCustomisedCellularAutomaton(int ruleset[], int gens, int size, vector<int> index, int ruleNumber)
+{
+    int *cells = initialise(size);
+    populateFirstGeneration(index, cells);
+    printGeneration(cells, ruleset, gens, ruleNumber);
+    free(cells);
+}
+
+int *initialise(int size)
+{
+    int *cells = (int *)malloc(sizeof(int) * size);
 
     for (int i = 0; i < ROW_SIZE; i++)
     {
-        if (i == ROW_SIZE / 2)
-        {
-            cells[i] = 1;
-        }
-        else
-        {
-            cells[i] = 0;
-        }
+        cells[i] = 0;
     }
+    return cells;
+}
+void populateFirstGeneration(vector<int> index, int *cells)
+{
+    for (int i = 0; i < index.size(); i++)
+    {
+        cells[index.at(i)] = 1;
+    }
+}
 
+void printGeneration(int *cells, int ruleset[], int gens, int ruleNumber)
+{
 #ifdef _WIN32
     _setmode(_fileno(stdout), _O_U16TEXT);
 #else
     std::locale::global(std::locale("en_US.utf8"));
 #endif
-
-    for (int gen = 0; gen < GENERATIONS; gen++)
+    string board;
+    for (int gen = 0; gen < gens; gen++)
     {
         if (gen <= 9)
             wcout << L' ';
+
         wcout << gen;
         for (int i = 0; i < ROW_SIZE; i++)
         {
             if (cells[i] == 1)
             {
                 wcout << L'█';
+                board += '0';
             }
             else
             {
                 wcout << L' ';
+                board += '.';
             }
         }
+        board += "\n";
         wcout << endl;
         generate(cells, ruleset);
     }
-
-    free(cells);
-    return 0;
+    saveToFile(board, ruleNumber);
 }
-
 void generate(int *cells, int ruleset[])
 {
     int nextgen[ROW_SIZE];
@@ -82,59 +93,20 @@ void generate(int *cells, int ruleset[])
     }
 }
 
-void decimalToBinary(){
-    unsigned int decimalNumber;
-    do {
-        cout << "Enter a decimal number (0 to 255): ";
-        cin >> decimalNumber;
-        if (cin.fail()) {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            decimalNumber = 256; 
-        }
-        if(decimalNumber > 255){
-            cout << "The number must be between 0 and 255. Please try again." << endl;
-        }
-    } while(decimalNumber > 255);
-
-    cout << "The binary representation of " << decimalNumber << " is: ";
-    std::bitset<8> binaryNumber(decimalNumber); 
-    cout << binaryNumber << endl;
-    std::string binaryString = binaryNumber.to_string();
-    size_t firstOne = binaryString.find('1');
-    if(firstOne != std::string::npos) {
-        cout << binaryString.substr(firstOne) << endl;
-    } else {
-        cout << "0" << endl; 
-    }
-}
-
-
-
-void menu(){
-    int choice;
-    cout << "1. Run cellular automaton" << endl;
-    cout << "2. Game of life" << endl;
-    cout << "3. Decimal to Binary" << endl; 
-    cout << "4. Exit" << endl;
-    cin >> choice;
-    switch (choice)
+void decimalToBinary(int decimal, int binary[8])
+{
+    // Ensure the number is within the 8-bit range
+    if (decimal < 0 || decimal > 255)
     {
-    case 1:
-        //cellular automaton
-        break;
-    case 2:
-        //game of life
-        break;
-    case 3:
-        decimalToBinary(); // Call the new function
-        break;
-    case 4: 
-        exit(1);
-    default:
-        cout << "Please enter a valid option." << endl;
-        menu();
-        break;
+        std::cerr << "Number out of 8-bit range." << std::endl;
+        return; // Exit the function
+    }
+
+    // Fill the binary array with the corresponding binary digits
+    for (int i = 7; i >= 0; --i)
+    {
+        binary[i] = decimal % 2;
+        decimal /= 2;
     }
 }
 
@@ -158,4 +130,29 @@ int rules(int left, int me, int right, int ruleset[])
         return ruleset[7];
 
     return 0;
+}
+
+void saveToFile(string &boardState, int ruleNumber)
+{
+    // Convert the rule number to a string and use it as the filename
+    std::string filename = "Rule" + std::to_string(ruleNumber) + ".txt";
+
+    std::ofstream out(filename, std::ios::out); 
+
+    if (!out.is_open())
+    {
+        std::cerr << "Error: Could not open file for writing." << std::endl;
+        return;
+    }
+    
+    out << boardState;
+
+    // Check for any errors in writing to the file
+    if (out.fail())
+    {
+        std::cerr << "Failed to write to the file." << std::endl;
+    }
+
+    // Close the file stream
+    out.close();
 }
